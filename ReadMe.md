@@ -3,6 +3,7 @@
 We have streamlined the firmware signing process so you don’t have to. Our solution allows individual developers to sign firmware in multiple modes **without ever accessing the development keys**.
 
 Our Docker-based approach integrates the chip SDK and signing tools, enabling seamless CI/CD pipeline integration while maintaining rigorous security and approval processes.
+
 ## Key Security Features:
 
 * **Granular access control**: Developers can be restricted to signing with lower-environment keys (e.g., Dev, QA), while production-level signing is restricted to approved merges into the release branch.
@@ -16,8 +17,53 @@ Our Docker-based approach integrates the chip SDK and signing tools, enabling se
 * The signing process runs entirely within your CI/CD pipeline and never exposes private keys to external systems or our cloud.
 * After signing, the container and its memory space are completely destroyed, ensuring no residual exposure of sensitive information.
 
-This approach eliminates the complexity of firmware signing while keeping it safe, efficient, and fully controlled by you.
+This approach eliminates the complexity of firmware signing while keeping it safe, efficient, and fully controlled by you.name: 'rp2350-firmware-signer'
 
+## Sample Use
+### Sample Call from your CICD Workflow
+
+This section shows you how to add a call to our pre-build
+firmware signer from your code. 
+
+Sourced from https://github.com/immutaverse/rp2350-ex-mkt-sign-via-action/blob/main/.github/do-sign.ymlhttps://github.com/immutaverse/rp2350-ex-mkt-sign-via-action/blob/main/.github/do-sign.yml Please look there for the most current version
+
+<!-- TODO: Add a script to auto pull and update README when this file has changed https://github.com/immutaverse/rp2350-ex-mkt-sign-via-action/blob/main/.github/do-sign.yml -->
+
+
+```
+uses: actions/rp2350-firmware-signer@v0.004
+  with:
+    # Path to the previously generated uf2 firmware file
+    FIRMWARE: 'unsigned/blink_fast.uf2'
+
+    # 'sign' to sign an existing firmware file.
+    # 'build' to build the firmware from source and sign it.
+    #   if the PRIVATE_KEY is provided.
+    BUILD_ACTION: 'sign'
+    
+    #Base64 encoded private key normally loaded from
+    #github secret but you can provide it from 
+    #any source. 
+    PRIVATE_KEY: ##### GET FROM PRIVATE VARIABLE
+    
+    # Path to otp firmare options file that will be 
+    # updated with public key for signing.
+    OTP_FILE: signed/blink_fast.otp.json
+
+    #  this is the boardname passed into the build
+    #  scripts.  normally only used when build_action
+    #  is set to build.  May not be needed for 
+    #  sign only events.
+    BOARD_NAME: 'pico2'
+
+    # source directory containing source code to build
+    #  with the SDK file.  Mandatory when build_action 
+    #  is set to build. This is the directory where 
+    #  you have saved your CMakeLists.txt See and example
+    #  at https://github.com/immutaverse/rp2350-ex-blink-fast    
+    #  ignored when build_action is set to sign.
+    SOURCE_DIR: 'NOT SET'
+```
 
 ## One time steps for each product or Model
 A product is a unique piece of hardware where you need to deploy signed firmware. The best practice is to create a new signing key for each major release of your product and approximately once a year. Many companies create only one signing key per unique model number, but best practice is to use different signing keys for each major release and annual update. This means you need different signed versions of the firmware and must manage their deployment to matching units, but it improves security and reduces the scope of impact in the event of a security event. 
@@ -53,3 +99,11 @@ A product is a unique piece of hardware where you need to deploy signed firmware
 
 ## Key preservation
 * **Secure key storage recommendation**: While we suggest storing signing keys as GitHub private variables, we also recommend encrypting and backing them up on portable storage in a secure location (e.g., a safe deposit box) for worst-case recovery.
+
+## Interfacing 
+
+
+
+  ### Outputs
+
+
