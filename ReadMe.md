@@ -1,8 +1,8 @@
 # Firmware Signing for RP2350 and Pico2 Chips
 
-We have streamlined the firmware signing process so you don’t have to. Our solution allows individual developers to sign firmware in multiple modes **without ever having access to the signing keys**.
+Secure boot helps protect customers by ensuring that only approved code can run on devices, but it requires cryptographic firmware signing using private keys. We have streamlined the firmware signing process to make it secure and efficient. A critical risk is that every person with access to signing keys increases the likelihood of fraudulent software being deployed. Our solution allows individual developers to sign firmware in multiple modes **without ever having access to the signing keys**.
 
-Our Docker-based approach integrates the chip SDK and signing tools, enabling seamless CI/CD pipeline integration while maintaining rigorous security and approval processes.
+Our Docker-based approach integrates the chip vendor SDK and signing tools, enabling seamless CI/CD pipeline integration while maintaining rigorous security and approval processes. This saves you time and expense by eliminating the need to configure and maintain your own secure signing toolchain.
 
 ## Key Security Features:
 
@@ -90,7 +90,9 @@ A product is a unique piece of hardware where you need to deploy signed firmware
 *  You create your signing keys.  We provide example commands for this.
 *  You save the private signing key as a git secret.
 *  You save the private signing key in a HSM or encrypted on
-   portable media in a safe deposit box.
+   portable media in a safe deposit box.  The key here is make 
+   triple sure it never leaks and that you can not loose access 
+   to it even under worst case natural disasters.
 *  You record the git variable to model # mapping in your master 
    keys spreadsheet.  This is a important audit and recovery 
    asset.  
