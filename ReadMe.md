@@ -21,11 +21,11 @@ This approach eliminates the complexity of firmware signing while keeping it saf
 
 ## Sample Use
 ### Sample Call from your CICD Workflow
-
 This section shows you how to add a call to our pre-build
-firmware signer from your code. 
+firmware signer from your code. For a complete sample project including a pre-built binary ready to sign 
+see [rp2350-ex-mkt-sign-via-action](https://github.com/immutaverse/rp2350-ex-mkt-sign-via-action)
 
-Sourced from https://github.com/immutaverse/rp2350-ex-mkt-sign-via-action/blob/main/.github/do-sign.ymlhttps://github.com/immutaverse/rp2350-ex-mkt-sign-via-action/blob/main/.github/do-sign.yml Please look there for the most current version
+Sourced from [do-sign.yml](https://github.com/immutaverse/rp2350-ex-mkt-sign-via-action/blob/main/.github/do-sign.yml) Please look there for the most current version
 
 <!-- TODO: Add a script to auto pull and update README when this file has changed https://github.com/immutaverse/rp2350-ex-mkt-sign-via-action/blob/main/.github/do-sign.yml -->
 
