@@ -18,5 +18,48 @@ Our Docker-based approach integrates the chip SDK and signing tools, enabling se
 
 This approach eliminates the complexity of firmware signing while keeping it safe, efficient, and fully controlled by you.
 
+
+## One time steps for each product or Model
+A product is a unique piece of hardware where you 
+have a need to deploy signed firmware.  The best practice
+is to create a new signing key for each major release of 
+your product and about once a year.   Many companies only
+create one signing key for each unique model # but best 
+practice is to use different signing keys for each major 
+release of the product and about once a year. This means you 
+need different signed versions of the firmware and need to 
+manage deployment of those signed versions to matching units
+but it does improve security and reduce scope of impact in 
+the event of a security event. 
+*  You create your signing keys.  We provide example commands for this.
+*  You save the private signing key as a git secret.
+*  You save the private signing key in a HSM or encrypted on
+   portable media in a safe deposit box.
+*  You record the git variable to model # mapping in your master 
+   keys spreadsheet.  This is a important audit and recovery 
+   asset.  
+*  You tell the your develpment teams what git variable to reverence 
+   for signing.
+
+## Steps for each new repository project 
+*  You create your github.com repository with your firmware files
+*  You update your CICD to build the firmware file.  For pico2 this
+   is a uf2 file. 
+   * We also offer pre-built actions along with our pre-built toolchain
+     and SDK files to greatly simplify the process of building your 
+     source to produce the firmware file. 
+*  You update your CICD to call our firmware signer for your chipset.
+   * generate the starting OTP flash settings we will add 
+     secure boot settings to this file.  
+*  We sign the firmware:
+   * Generate A new signed firmware file.
+   * Write A new otp file used to flash the public key to your hardware.
+     This step also forces the hardware into a mode where it will
+     only run signed firmware.
+   * Write A new script that will flash the public key to your hardware 
+     and require secure boot.
+*  You modify your CICD to save the saved firmware to a location where 
+   you can make it avaialble for download to update your devices.
+
 ## Key preservation
 * **Secure key storage recommendation**: While we suggest storing signing keys as GitHub private variables, we also recommend encrypting and backing them up on portable storage in a secure location (e.g., a safe deposit box) for worst-case recovery.
