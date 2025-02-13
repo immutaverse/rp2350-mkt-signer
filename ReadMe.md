@@ -44,7 +44,7 @@ uses: actions/rp2350-firmware-signer@v0.004
     #Base64 encoded private key normally loaded from
     #github secret but you can provide it from 
     #any source. 
-    PRIVATE_KEY: ##### GET FROM PRIVATE VARIABLE
+    PRIVATE_KEY: ${{ secrets.RP2350_SAMPLE_PRIVATE_KEY }}
     
     # Path to otp firmare options file that will be 
     # updated with public key for signing.
