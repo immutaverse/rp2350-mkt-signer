@@ -20,17 +20,7 @@ This approach eliminates the complexity of firmware signing while keeping it saf
 
 
 ## One time steps for each product or Model
-A product is a unique piece of hardware where you 
-have a need to deploy signed firmware.  The best practice
-is to create a new signing key for each major release of 
-your product and about once a year.   Many companies only
-create one signing key for each unique model # but best 
-practice is to use different signing keys for each major 
-release of the product and about once a year. This means you 
-need different signed versions of the firmware and need to 
-manage deployment of those signed versions to matching units
-but it does improve security and reduce scope of impact in 
-the event of a security event. 
+A product is a unique piece of hardware where you need to deploy signed firmware. The best practice is to create a new signing key for each major release of your product and approximately once a year. Many companies create only one signing key per unique model number, but best practice is to use different signing keys for each major release and annual update. This means you need different signed versions of the firmware and must manage their deployment to matching units, but it improves security and reduces the scope of impact in the event of a security event. 
 *  You create your signing keys.  We provide example commands for this.
 *  You save the private signing key as a git secret.
 *  You save the private signing key in a HSM or encrypted on
