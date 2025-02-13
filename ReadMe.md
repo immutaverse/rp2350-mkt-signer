@@ -1,6 +1,6 @@
 # Firmware Signing for RP2350 and Pico2 Chips
 
-We have streamlined the firmware signing process so you don’t have to. Our solution allows individual developers to sign firmware in multiple modes **without ever accessing the development keys**.
+We have streamlined the firmware signing process so you don’t have to. Our solution allows individual developers to sign firmware in multiple modes **without ever having access to the signing keys**.
 
 Our Docker-based approach integrates the chip SDK and signing tools, enabling seamless CI/CD pipeline integration while maintaining rigorous security and approval processes.
 
