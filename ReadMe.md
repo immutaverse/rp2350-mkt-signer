@@ -14,7 +14,7 @@ Our Docker-based approach integrates the chip SDK and signing tools, enabling se
 ## How It Works:
 
 * Our proprietary Docker images contain the necessary SDK, signing tools, and validation logic.
-* The signing process runs entirely within your CI/CD pipeline and never exposes private keys to external systems or our cloud.
+* The signing process runs entirely within your CI/CD pipeline and never expose private keys to external systems or our cloud.
 * After signing, the container and its memory space are completely destroyed, ensuring no residual exposure of sensitive information.
 
 This approach eliminates the complexity of firmware signing while keeping it safe, efficient, and fully controlled by you.name: 'rp2350-firmware-signer'
@@ -64,6 +64,26 @@ uses: actions/rp2350-firmware-signer@v0.004
     #  ignored when build_action is set to sign.
     SOURCE_DIR: 'NOT SET'
 ```
+* Please note: The caller is responsible to copy any 
+  files needed to a location accessible by the docker
+  image and adjust the input parameters to point at 
+  those locations.  By security principal of LEAST_ACCESS
+  you should 
+  never copy more than the singer / builder needs to 
+  directories it can access.
+
+### Outputs
+* At same path and name as input firmware the signed
+  firmware is written with base_name.uf2 converted to
+  base_name.signed.uf2.
+* The OTP file specified in input is udpated with public key 
+* At same path and name as input firmware a script to 
+  blow the fuses and force the cpu to only accept software
+  singed with the private key is written.  base_name.uf2 
+  is changed to base_name.sec-boot-blow-fuses.sh  this
+  script will only run on machines where picotool has been
+  successfully installed. 
+
 
 ## One time steps for each product or Model
 A product is a unique piece of hardware where you need to deploy signed firmware. The best practice is to create a new signing key for each major release of your product and approximately once a year. Many companies create only one signing key per unique model number, but best practice is to use different signing keys for each major release and annual update. This means you need different signed versions of the firmware and must manage their deployment to matching units, but it improves security and reduces the scope of impact in the event of a security event. 
@@ -99,11 +119,4 @@ A product is a unique piece of hardware where you need to deploy signed firmware
 
 ## Key preservation
 * **Secure key storage recommendation**: While we suggest storing signing keys as GitHub private variables, we also recommend encrypting and backing them up on portable storage in a secure location (e.g., a safe deposit box) for worst-case recovery.
-
-## Interfacing 
-
-
-
-  ### Outputs
-
 
