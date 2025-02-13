@@ -1,0 +1,58 @@
+name: 'rp2350-firmware-signer'
+description: |
+  PRE-ALPHA firmware signer action to enable secure boot
+  for RP2350 series chips and pico2 '
+inputs:
+  FIRMWARE:
+    description: 'Path to the previously generated uf2 firmware file'
+    required: true
+    default: 'workspace/firmware/firmware.uf2'
+  BUILD_ACTION:
+    description: |
+      sign or build. 
+      When set to sign FIRMWARE is MANDATORY 
+      When set to build SOURCE_DIR is mandatory'
+    required: true
+    default: 'sign'
+  PRIVATE_KEY:
+    description: |
+      Base64 encoded private key normally loaded from
+      github secret but you can provide it from 
+      any source.   
+    required: false
+    default: 'NOT-SET'
+  OTP_FILE:
+    description: |
+      path to the OTP file to be used for signing
+      you should have any fuse bits you need set 
+      already defined in this file and the signer 
+      will update it with the public key ready to 
+      burn into your chips.  
+    required: true
+    default: 'workspace/firmware/otp_file.json'
+  BOARD_NAME:
+    description: | 
+      this is the boardname passed into the build
+      scripts.  normally only used when build_action
+      is set to build. 
+    required: false
+    default: 'pico2'
+  SOURCE_DIR: 
+    description: |
+      source directory containing source code to build
+      with the SDK file.  Mandatory when build_action 
+      is set to build. This is the directory where 
+      you have saved your CMakeLists.txt See and example
+      at https://github.com/immutaverse/rp2350-ex-blink-fast      
+    required: false
+    default: 'GitHub'
+  
+outputs:
+  message:
+    description: 'message from the executing the action '
+runs:
+  using: 'node18'
+  main: 'index.js'
+branding:
+  icon: 'award'
+  color: 'green'
