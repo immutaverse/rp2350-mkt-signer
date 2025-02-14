@@ -17,7 +17,7 @@ Our Docker-based approach integrates the chip vendor SDK and signing tools, enab
 * The signing process runs entirely within your CI/CD pipeline and never expose private keys to external systems or our cloud.
 * After signing, the container and its memory space are completely destroyed, ensuring no residual exposure of sensitive information.
 
-This approach eliminates the complexity of firmware signing while keeping it safe, efficient, and fully controlled by you.name: 'rp2350-firmware-signer'
+This approach eliminates the complexity of firmware signing while keeping it safe, efficient, and fully controlled inside of a fully repeatable and auditable CICD pipeline. 
 
 ## Sample Use
 ### Sample Call from your CICD Workflow
@@ -139,5 +139,9 @@ To mitigate these risks, we recommend using clean, containerized build environme
 * Increased Security – The entire build process occurs within GitHub’s infrastructure, eliminating reliance on potentially compromised developer workstations or long-lived build servers.
 * Simplified CI/CD Integration – Automated builds ensure that every firmware version is compiled in a controlled, repeatable manner.
 Elimination of SDK/Toolchain Conflicts – Every build starts from a known, clean state, ensuring that SDK installations and dependencies do not conflict with other software on a developer’s machine.
-### Pre-Built Toolchains and Actions
+
 To simplify this process, [Immutaverse](mailto:sales@immutaverse.com) provides pre-built GitHub Actions, toolchains, and SDK files, allowing you to easily integrate a fully managed and secure build process into your CI/CD pipeline.
+
+Complex SDK Dependencies – Many SDKs require dozens to hundreds of dependencies, making build environments large and difficult to manage. Setting up these dependencies directly within GitHub Actions on every build is slow and inefficient. By bundling everything into pre-built Docker images, we provide a complete, working toolchain that is frozen at a known version. At the same time, we regularly release new images with updated libraries, allowing teams to upgrade at their own pace—testing new versions safely without jeopardizing their existing build environments.
+
+For enterprise-grade customers, we also offer custom-built images with pre-downloaded libraries tailored to their specific products, significantly reducing build times.
