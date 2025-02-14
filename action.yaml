@@ -65,30 +65,20 @@ branding:
   color: 'green'
 
 
-jobs:
-  sign:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-      attestations: read
-      id-token: read
-    env:  
-      BUILD_ACTION: ${{ inputs.BUILD_ACTION }}
-      OTP_FILE: ${{ inputs.OTP_FILE }}
-      FIRMWARE: ${{ inputs.FIRMWARE }}
-      PRIVATE_KEY: ${{ inputs.PRIVATE_KEY }}
-      BOARD_NAME: ${{ inputs.BOARD_NAME }}
-      SOURCE_DIR: ${{ inputs.SOURCE_DIR }}
-      SIGN_LOG_LEVEL: ${{ inputs.SIGN_LOG_LEVEL }}
-      DOCKER_WORKSPACE: "docker_workspace"
-      DW_FIRMWARE: "docker_workspace/firmware"
-      DW_OTP: "docker_workspace/otp.json"
-      DW_FUSE: "docker_workspace/otp.sec-boot-blow-fuses.sh"
+runs:
+  using: "composite"
 
-    steps:
+  steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Set Environment Variables
+        shell: bash
+        run: |
+          echo "DOCKER_WORKSPACE=docker_workspace" >> $GITHUB_ENV
+          echo "DW_FIRMWARE=docker_workspace/firmware" >> $GITHUB_ENV
+          echo "DW_OTP=docker_workspace/otp.json" >> $GITHUB_ENV
+          echo "DW_FUSE=docker_workspace/otp.sec-boot-blow-fuses.sh" >> $GITHUB_ENV
 
       # RE: Principle of least access we only want to copy 
       # things needed for the docker image to perform the signing
@@ -98,6 +88,7 @@ jobs:
       - name: prepare signing input
         run: |
           python3 prepare-sign-input.py          
+          
           
       - name: Log in to GitHub Container Registry (GHCR)
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
@@ -111,8 +102,8 @@ jobs:
           docker pull ghcr.io/immutaverse/pico-builder:latest
           docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
             -e PRIVATE_KEY="${{ inputs.PRIVATE_KEY }}" \
-            -e FIRMWARE="${{ DW_FIRMWARE }}" \
-            -e OTP_FILE="${{ DW_OTP }}" \
+            -e FIRMWARE="$DW_FIRMWARE" \
+            -e OTP_FILE="$DW_OTP" \
             -e BOARD_NAME="${{ inputs.BOARD_NAME }}" \
             -e BUILD_ACTION="${{ inputs.BUILD_ACTION }}" \
             -e SIGN_LOG_LEVEL="${{ inputs.SIGN_LOG_LEVEL }}" \
@@ -123,6 +114,7 @@ jobs:
           # TODO: THESE ARE  ARE NOT QUITE RIGHT NEED TO COPY FROM OUR
           # WELL KNOWN LOCATION BACK TO NAME PROVIDED BY INPUT PARMS.
           # Probably need to do this in python 
+          mkdir -p "$GITHUB_WORKSPACE/output"
           cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/firmware.signed" "$GITHUB_WORKSPACE/output/"
           cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp-final.json" "$GITHUB_WORKSPACE/output/"
           cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp.sec-boot-blow-fuses.sh" "$GITHUB_WORKSPACE/output/"
