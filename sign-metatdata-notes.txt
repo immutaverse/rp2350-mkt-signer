@@ -1,0 +1,26 @@
+# some more advanced sdk signing will need something like this
+# wil need to add to the docker image or general setup 
+# but likely to vary by chipset. 
+
+- name: Generate Firmware Metadata for Signing
+  run: |
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    FIRMWARE_HASH=$(sha256sum $FIRMWARE | awk '{print $1}')
+    PUBLIC_KEY_HASH=$(openssl dgst -sha256 -binary public.pem | openssl base64)
+
+    cat <<EOF > docker_workspace/firmware_metadata.json
+    {
+      "version": "${{ inputs.FIRMWARE_VERSION }}",
+      "hardware_id": "${{ inputs.BOARD_NAME }}",
+      "timestamp": "$TIMESTAMP",
+      "signature_algorithm": "ECDSA-P256",
+      "public_key_hash": "$PUBLIC_KEY_HASH",
+      "firmware_hash": "$FIRMWARE_HASH",
+      "security_flags": {
+        "secure_boot": true,
+        "debug_disabled": true
+      }
+    }
+    EOF
+
+    echo "Generated firmware_metadata.json"

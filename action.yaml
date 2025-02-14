@@ -46,20 +46,23 @@ inputs:
       at https://github.com/immutaverse/rp2350-ex-blink-fast      
     required: false
     default: 'GitHub'
+  SIGN_METADATA:
+    description: |
+      path to file contaiing Metadata to be included 
+      in the signed firmware file.  This is a dictionary 
+      of key value pairs.  Not all chip signiners use this
+      the pico2 signer does not.
+    required: false
+    default: '{}'
   
-outputs:
-  message:
-    description: 'message from the executing the action '
 
-runs:The message to be printed.
-  using: 'node18'
-  main: 'index.js'
-
+#outputs:
+#  message:
+#    description: 'message from the executing the action '
 
 branding:
   icon: 'award'
   color: 'green'
-
 
 
 jobs:
@@ -99,9 +102,13 @@ jobs:
       - name: Log in to GitHub Container Registry (GHCR)
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
+
+      #TODO: We need to allow a version of the docker immage to be 
+      #  specified so users can pull the one with the libraries they
+      #  desire without needing a new marketplace action for each one.
       - name: Run Docker Container to perform the signing
         run: |
-          docker pull ghcr.io/your-org/pico-builder:latest
+          docker pull ghcr.io/immutaverse/pico-builder:latest
           docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
             -e PRIVATE_KEY="${{ inputs.PRIVATE_KEY }}" \
             -e FIRMWARE="${{ DW_FIRMWARE }}" \
