@@ -86,18 +86,20 @@ runs:
       # and we do not want to allow docker image access to full 
       # agent workspace file system. 
       - name: prepare signing input
+        shell: bash
         run: |
           python3 prepare-sign-input.py          
           
           
       - name: Log in to GitHub Container Registry (GHCR)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+        run: echo "${{ inputs.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
 
       #TODO: We need to allow a version of the docker immage to be 
       #  specified so users can pull the one with the libraries they
       #  desire without needing a new marketplace action for each one.
       - name: Run Docker Container to perform the signing
+        shell: bash
         run: |
           docker pull ghcr.io/immutaverse/pico-builder:latest
           docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
@@ -110,6 +112,7 @@ runs:
             pico-builder:latest
 
       - name: Copy Signed Assets Back normal target locations
+        shell: bash
         run: |
           # TODO: THESE ARE  ARE NOT QUITE RIGHT NEED TO COPY FROM OUR
           # WELL KNOWN LOCATION BACK TO NAME PROVIDED BY INPUT PARMS.
