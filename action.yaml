@@ -88,6 +88,12 @@ runs:
       - name: prepare signing input
         shell: bash
         run: |
+          echo "curr ls"
+          ls -l
+          echo "ls .."
+          ls -l ..
+          echo "ls ../.."
+          ls -l ../..
           python3 prepare-sign-input.py          
           
           
