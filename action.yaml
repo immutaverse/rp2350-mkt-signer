@@ -92,6 +92,7 @@ runs:
           
           
       - name: Log in to GitHub Container Registry (GHCR)
+        shell: bash
         run: echo "${{ inputs.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
 
