@@ -79,6 +79,13 @@ runs:
           echo "DW_FIRMWARE=docker_workspace/firmware" >> $GITHUB_ENV
           echo "DW_OTP=docker_workspace/otp.json" >> $GITHUB_ENV
           echo "DW_FUSE=docker_workspace/otp.sec-boot-blow-fuses.sh" >> $GITHUB_ENV
+          echo "BUILD_ACTION=${{ inputs.BUILD_ACTION }}" >> $GITHUB_ENV
+          echo "FIRMWARE=${{ inputs.FIRMWARE }}" >> $GITHUB_ENV
+          echo "OTP_FILE=${{ inputs.OTP_FILE }}" >> $GITHUB_ENV
+          echo "PRIVATE_KEY=${{ inputs.PRIVATE_KEY }}" >> $GITHUB_ENV
+          echo "BOARD_NAME=${{ inputs.BOARD_NAME }}" >> $GITHUB_ENV
+          echo "SOURCE_DIR=${{ inputs.SOURCE_DIR }}" >> $GITHUB_ENV
+      
 
       # RE: Principle of least access we only want to copy 
       # things needed for the docker image to perform the signing
@@ -99,9 +106,9 @@ runs:
           python3 ${{ github.action_path }}/prepare-sign-input.py          
           
           
-      - name: Log in to GitHub Container Registry (GHCR)
-        shell: bash
-        run: echo "${{ inputs.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+      #- name: Log in to GitHub Container Registry (GHCR)
+      #  shell: bash
+      #  run: echo "${{ inputs.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
 
       #TODO: We need to allow a version of the docker immage to be 
