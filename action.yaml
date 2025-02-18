@@ -106,9 +106,9 @@ runs:
           python3 ${{ github.action_path }}/prepare-sign-input.py          
           
           
-      #- name: Log in to GitHub Container Registry (GHCR)
-      #  shell: bash
-      #  run: echo "${{ inputs.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+      - name: Log in to GitHub Container Registry (GHCR)
+        shell: bash
+        run: echo "${{ inputs.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
 
       #TODO: We need to allow a version of the docker immage to be 
