@@ -128,10 +128,10 @@ runs:
       #  desire without needing a new marketplace action for each one.
       - name: Run Docker Container to perform the signing
         shell: bash
-        echo "docker workspace path=$GITHUB_WORKSPACE/$DOCKER_WORKSPACE"        
-
         run: |
+          echo "docker workspace path=$GITHUB_WORKSPACE/$DOCKER_WORKSPACE"        
           docker pull ghcr.io/immutaverse/pico-builder:latest
+          echo "docker pull complete"
           docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
             -e PRIVATE_KEY="$PRIVATE_KEY" \
             -e FIRMWARE="$DW_FIRMWARE" \
@@ -140,7 +140,7 @@ runs:
             -e BUILD_ACTION="${{ inputs.BUILD_ACTION }}" \
             -e SIGN_LOG_LEVEL="${{ inputs.SIGN_LOG_LEVEL }}" \
             pico-builder:latest
-          echo "docker run is finished"
+          echo "docker run finished"
 
       - name: Copy Signed Assets Back normal target locations
         shell: bash
