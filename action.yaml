@@ -14,13 +14,6 @@ inputs:
       When set to build SOURCE_DIR is mandatory'
     required: true
     default: 'sign'
-  PRIVATE_KEY:
-    description: |
-      Base64 encoded private key normally loaded from
-      github secret but you can provide it from 
-      any source.   
-    required: false
-    default: 'NOT-SET'
   OTP_FILE:
     description: |
       path to the OTP file to be used for signing
@@ -54,6 +47,20 @@ inputs:
       the pico2 signer does not.
     required: false
     default: '{}'
+secrets:
+  PRIVATE_KEY:
+    description: |
+      Base64 encoded private key normally loaded from
+      github secret but you can provide it from 
+      any source.   
+    required: true    
+  DOCKER_ACCESS_TOKEN:
+    description: |
+      Access key for the docker image to pull the 
+      image from the registry.  This is normally 
+      a github secret but you can provide it from 
+      any source.   
+    required: true
   
 
 #outputs:
@@ -108,7 +115,7 @@ runs:
           
       - name: Log in to GitHub Container Registry (GHCR)
         shell: bash
-        run: echo "${{ inputs.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+        run: echo "${{ inputs.DOCKER_ACCESS_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
 
       #TODO: We need to allow a version of the docker immage to be 
