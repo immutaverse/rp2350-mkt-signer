@@ -54,7 +54,7 @@ inputs:
       github secret but you can provide it from 
       any source.   
     required: true    
-    
+
   DOCKER_ACCESS_TOKEN:
     description: |
       Access key for the docker image to pull the 
@@ -90,8 +90,8 @@ runs:
           echo "BUILD_ACTION=${{ inputs.BUILD_ACTION }}" >> $GITHUB_ENV
           echo "FIRMWARE=${{ inputs.FIRMWARE }}" >> $GITHUB_ENV
           echo "OTP_FILE=${{ inputs.OTP_FILE }}" >> $GITHUB_ENV
-          echo "PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}" >> $GITHUB_ENV
-          echo "DOCKER_ACCESS_TOKEN=${{ secrets.DOCKER_ACCESS_TOKEN }}" >> $GITHUB_ENV
+          echo "PRIVATE_KEY=${{ inputs.PRIVATE_KEY }}" >> $GITHUB_ENV
+          echo "DOCKER_ACCESS_TOKEN=${{ inputs.DOCKER_ACCESS_TOKEN }}" >> $GITHUB_ENV
           echo "BOARD_NAME=${{ inputs.BOARD_NAME }}" >> $GITHUB_ENV
           echo "SOURCE_DIR=${{ inputs.SOURCE_DIR }}" >> $GITHUB_ENV
       
