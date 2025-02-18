@@ -115,7 +115,7 @@ runs:
           python3 ${{ github.action_path }}/prepare-sign-input.py          
           echo Docker workspace $GITHUB_WORKSPACE/$DOCKER_WORKSPACE after prepare-sign-input
           ls -l $GITHUB_WORKSPACE/$DOCKER_WORKSPACE
-          echoed "finish signing input"
+          echo "finish preapring signing input"
           
           
       - name: Log in to GitHub Container Registry (GHCR)
