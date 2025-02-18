@@ -47,13 +47,14 @@ inputs:
       the pico2 signer does not.
     required: false
     default: '{}'
-secrets:
+
   PRIVATE_KEY:
     description: |
       Base64 encoded private key normally loaded from
       github secret but you can provide it from 
       any source.   
     required: true    
+    
   DOCKER_ACCESS_TOKEN:
     description: |
       Access key for the docker image to pull the 
