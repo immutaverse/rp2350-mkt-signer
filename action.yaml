@@ -113,6 +113,9 @@ runs:
           echo "ls github.action_path"
           ls -l ${{ github.action_path }}
           python3 ${{ github.action_path }}/prepare-sign-input.py          
+          echo Docker workspace $GITHUB_WORKSPACE/$DOCKER_WORKSPACE after prepare-sign-input
+          ls -l $GITHUB_WORKSPACE/$DOCKER_WORKSPACE
+          echoed "finish signing input"
           
           
       - name: Log in to GitHub Container Registry (GHCR)
@@ -125,16 +128,19 @@ runs:
       #  desire without needing a new marketplace action for each one.
       - name: Run Docker Container to perform the signing
         shell: bash
+        echo "docker workspace path=$GITHUB_WORKSPACE/$DOCKER_WORKSPACE"        
+
         run: |
           docker pull ghcr.io/immutaverse/pico-builder:latest
           docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
-            -e PRIVATE_KEY="${{ inputs.PRIVATE_KEY }}" \
+            -e PRIVATE_KEY="$PRIVATE_KEY" \
             -e FIRMWARE="$DW_FIRMWARE" \
             -e OTP_FILE="$DW_OTP" \
             -e BOARD_NAME="${{ inputs.BOARD_NAME }}" \
             -e BUILD_ACTION="${{ inputs.BUILD_ACTION }}" \
             -e SIGN_LOG_LEVEL="${{ inputs.SIGN_LOG_LEVEL }}" \
             pico-builder:latest
+          echo "docker run is finished"
 
       - name: Copy Signed Assets Back normal target locations
         shell: bash
