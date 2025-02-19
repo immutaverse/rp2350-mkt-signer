@@ -90,7 +90,8 @@ runs:
       - name: Set Environment Variables
         shell: bash
         run: |
-          echo "DOCKER_WORKSPACE=docker_workspace" >> $GITHUB_ENV
+          export DOCKER_WORKSPACE="docker_workspace" 
+          echo "DOCKER_WORKSPACE=$DOCKER_WORKSPACE" >> $GITHUB_ENV
           echo "DW_FIRMWARE=docker_workspace/firmware" >> $GITHUB_ENV
           echo "DW_OTP=docker_workspace/otp.json" >> $GITHUB_ENV
           echo "DW_FUSE=docker_workspace/otp.sec-boot-blow-fuses.sh" >> $GITHUB_ENV
@@ -107,9 +108,8 @@ runs:
           #echo "MNT_BLOW=/workspace/firmware-blow-fuses.sh" >> $GITHUB_ENV
           # Generate a timestamp (format: YYYY-MM-DD.HH.MM.SS)          
           export TSOUTDIR="$DOCKER_WORKSPACE/out/$(date +"%Y-%m-%d.%H.%M.%S")"          
-          echo "TSOUTDIR=$TSOUTDIR" >> "$GITHUB_ENV"          
-          mkdir -p "$TSOUTDIR"                    
-          echo "TSOUTDIR created at: $TSOUTDIR"
+          echo "TSOUTDIR=$TSOUTDIR" >> "$GITHUB_ENV"                                    
+          echo "TSOUTDIR=$TSOUTDIR"
       
 
       # RE: Principle of least access we only want to copy 
@@ -173,6 +173,8 @@ runs:
       - name: Copy Signed Assets Back normal target locations
         shell: bash
         run: |
+          mkdir -p "$TSOUTDIR"    
+          echo "TSOUTDIR created at: $TSOUTDIR"
           cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/firmware.signed" "$TSOUTDIR"
           cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp-final.json" "$TSOUTDIR"
           cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp.sec-boot-blow-fuses.sh" "$TSOUTDIR"
