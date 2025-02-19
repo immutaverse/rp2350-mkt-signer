@@ -141,7 +141,7 @@ runs:
         shell: bash
         run: |
           echo "start docker run"
-          docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
+          docker run --rm -a stdout -a stderr -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
             -e PRIVATE_KEY="$PRIVATE_KEY" \
             -e FIRMWARE="$DW_FIRMWARE" \
             -e OTP_FILE="$DW_OTP" \
