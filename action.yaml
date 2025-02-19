@@ -105,6 +105,11 @@ runs:
           #echo "MNT_FIRMWARE=/workspace/firmware" >> $GITHUB_ENV
           #echo "MNT_OTP=/workspace/otp.json" >> $GITHUB_ENV
           #echo "MNT_BLOW=/workspace/firmware-blow-fuses.sh" >> $GITHUB_ENV
+          # Generate a timestamp (format: YYYY-MM-DD.HH.MM.SS)          
+          export TSOUTDIR="$DOCKER_WORKSPACE/out/$(date +"%Y-%m-%d.%H.%M.%S")"          
+          echo "TSOUTDIR=$TSOUTDIR" >> "$GITHUB_ENV"          
+          mkdir -p "$TSOUTDIR"                    
+          echo "TSOUTDIR created at: $TSOUTDIR"
       
 
       # RE: Principle of least access we only want to copy 
@@ -168,11 +173,7 @@ runs:
       - name: Copy Signed Assets Back normal target locations
         shell: bash
         run: |
-          # TODO: THESE ARE  ARE NOT QUITE RIGHT NEED TO COPY FROM OUR
-          # WELL KNOWN LOCATION BACK TO NAME PROVIDED BY INPUT PARMS.
-          # Probably need to do this in python 
-          mkdir -p "$GITHUB_WORKSPACE/output"
-          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/firmware.signed" "$GITHUB_WORKSPACE/output/"
-          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp-final.json" "$GITHUB_WORKSPACE/output/"
-          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp.sec-boot-blow-fuses.sh" "$GITHUB_WORKSPACE/output/"
+          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/firmware.signed" "$TSOUTDIR"
+          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp-final.json" "$TSOUTDIR"
+          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp.sec-boot-blow-fuses.sh" "$TSOUTDIR"
 
