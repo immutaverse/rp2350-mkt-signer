@@ -104,6 +104,9 @@ runs:
       - name: prepare signing input
         shell: bash
         run: |
+          echo "github_workspace path=$GITHUB_WORKSPACE"        
+          echo "docker_workspace path=$DOCKER_WORKSPACE"  
+          echo "DW_WSP=$GITHUB_WORKSPACE/$DOCKER_WORKSPACE"
           echo "curr ls"
           ls -l
           echo "ls .."
@@ -129,7 +132,7 @@ runs:
       - name: Run Docker Container to perform the signing
         shell: bash
         run: |
-          echo "docker workspace path=$GITHUB_WORKSPACE/$DOCKER_WORKSPACE"        
+          echo "start docker pull"
           docker pull ghcr.io/immutaverse/pico-builder:latest
           echo "docker pull complete"
           docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
