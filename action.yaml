@@ -47,6 +47,13 @@ inputs:
       the pico2 signer does not.
     required: false
     default: '{}'
+  SIGN_LOG_LEVEL:
+    description: |
+      Log level for the signing process.  This is a 
+      string that can be set to debug, info, warning, 
+      error, or critical.  The default is info. 
+    required: false
+    default: 'DEBUG'
 
   PRIVATE_KEY:
     description: |
