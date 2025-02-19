@@ -131,7 +131,7 @@ runs:
         shell: bash
         run: |
           echo "start docker pull"
-          docker pull ghcr.io/immutaverse/pico-builder:latest
+          docker pull ghcr.io/immutaverse/pico-sign:latest          
           echo "docker pull complete"
 
       #TODO: We need to allow a version of the docker immage to be 
