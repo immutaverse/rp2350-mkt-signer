@@ -101,6 +101,10 @@ runs:
           echo "DOCKER_ACCESS_TOKEN=${{ inputs.DOCKER_ACCESS_TOKEN }}" >> $GITHUB_ENV
           echo "BOARD_NAME=${{ inputs.BOARD_NAME }}" >> $GITHUB_ENV
           echo "SOURCE_DIR=${{ inputs.SOURCE_DIR }}" >> $GITHUB_ENV
+          # Location of resources once mounted inside of GITUB
+          #echo "MNT_FIRMWARE=/workspace/firmware" >> $GITHUB_ENV
+          #echo "MNT_OTP=/workspace/otp.json" >> $GITHUB_ENV
+          #echo "MNT_BLOW=/workspace/firmware-blow-fuses.sh" >> $GITHUB_ENV
       
 
       # RE: Principle of least access we only want to copy 
@@ -128,6 +132,8 @@ runs:
           echo Docker workspace $GITHUB_WORKSPACE/$DOCKER_WORKSPACE after prepare-sign-input
           ls -l $GITHUB_WORKSPACE/$DOCKER_WORKSPACE
           echo "finish preapring signing input"
+          echo "docker_workspace path=$DOCKER_WORKSPACE"
+          ls -l $DOCKER_WORKSPACE
           
           
       - name: Log in to GitHub Container Registry (GHCR)
@@ -148,7 +154,7 @@ runs:
         shell: bash
         run: |
           echo "start docker run"
-          docker run --rm -a stdout -a stderr -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
+          docker run --rm -a stdout -a stderr -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/docker_workspace" \
             -e PRIVATE_KEY="$PRIVATE_KEY" \
             -e FIRMWARE="$DW_FIRMWARE" \
             -e OTP_FILE="$DW_OTP" \
