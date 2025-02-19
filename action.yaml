@@ -148,7 +148,7 @@ runs:
             -e BOARD_NAME="${{ inputs.BOARD_NAME }}" \
             -e BUILD_ACTION="${{ inputs.BUILD_ACTION }}" \
             -e SIGN_LOG_LEVEL="${{ inputs.SIGN_LOG_LEVEL }}" \
-            pico-sign:latest
+            ghcr.io/immutaverse/pico-sign:latest
           echo "docker run finished"
 
 
