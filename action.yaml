@@ -127,6 +127,12 @@ runs:
         shell: bash
         run: echo "${{ inputs.DOCKER_ACCESS_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
+      - name: pull docker image from registry
+        shell: bash
+        run: |
+          echo "start docker pull"
+          docker pull ghcr.io/immutaverse/pico-builder:latest
+          echo "docker pull complete"
 
       #TODO: We need to allow a version of the docker immage to be 
       #  specified so users can pull the one with the libraries they
@@ -134,9 +140,7 @@ runs:
       - name: Run Docker Container to perform the signing
         shell: bash
         run: |
-          echo "start docker pull"
-          docker pull ghcr.io/immutaverse/pico-builder:latest
-          echo "docker pull complete"
+          echo "start docker run"
           docker run --rm -it -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/workspace" \
             -e PRIVATE_KEY="$PRIVATE_KEY" \
             -e FIRMWARE="$DW_FIRMWARE" \
@@ -146,6 +150,7 @@ runs:
             -e SIGN_LOG_LEVEL="${{ inputs.SIGN_LOG_LEVEL }}" \
             pico-builder:latest
           echo "docker run finished"
+
 
       - name: Copy Signed Assets Back normal target locations
         shell: bash
