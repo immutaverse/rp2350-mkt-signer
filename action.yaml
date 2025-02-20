@@ -169,7 +169,7 @@ runs:
         shell: bash
         run: |
           echo "pwd=${PWD}"
-          ehco "list files ."
+          echo "list files ."
           ls -l .
           echo "list files sign_workspace"
           echo "SIGN_WORKSPACE=${{ inputs.SIGN_WORKSPACE }}"
