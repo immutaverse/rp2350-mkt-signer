@@ -168,6 +168,10 @@ runs:
       - name: check signing input files exist 
         shell: bash
         run: |
+          echo "pwd=${PWD}"
+          ehco "list files ."
+          ls -l .
+          echo "list files sign_workspace"
           echo "SIGN_WORKSPACE=${{ inputs.SIGN_WORKSPACE }}"
           echo "files in ${{ inputs.SIGN_WORKSPACE }}"
           ls -l ${{ inputs.SIGN_WORKSPACE }}
@@ -198,8 +202,8 @@ runs:
           docker run --rm -a stdout -a stderr -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/docker_workspace" \
             -e PRIVATE_KEY="$PRIVATE_KEY" \
             -e FIRMWARE="$FW_PATH" \
-            -e OTP_FILE="${{ inputs.OTP_FILE }}/${{ inputs.OTP_FILE }}" \
-            -e FIRMWARE_OUTPUT="${{ inputs.sign_WORKSPACE }}/{{ inputs.FIRMWARE_OUTPUT }}" \
+            -e OTP_FILE="${{ inputs.SIGN_WORKSPACE }}/${{ inputs.OTP_FILE }}" \
+            -e FIRMWARE_OUTPUT="${{ inputs.SIGN_WORKSPACE }}/{{ inputs.FIRMWARE_OUTPUT }}" \
             -e BOARD_NAME="${{ inputs.BOARD_NAME }}" \
             -e BUILD_ACTION="${{ inputs.BUILD_ACTION }}" \
             -e SIGN_LOG_LEVEL="${{ inputs.SIGN_LOG_LEVEL }}" \
