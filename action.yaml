@@ -12,7 +12,7 @@ inputs:
     description: 
       file name of previously generated uf2 firmware file
       must be inside of SIGN_WORKSPACE directory
-      eg: firmware.uf2  we assume that you have copied
+      firmware.uf2  we assume that you have copied
       the firmware file inside of sign_workspace.
     required: true
     
@@ -166,7 +166,7 @@ runs:
         run: echo "${{ inputs.SIGN_ACCESS_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
         # TODO: We need to pass our access token to cloud to get 
         # the token we need to access the docker image.  
-        
+
       - name: pull docker image from registry
         shell: bash
         run: |
