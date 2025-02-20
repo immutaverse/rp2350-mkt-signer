@@ -3,10 +3,27 @@ description: |
   PRE-ALPHA firmware signer action to enable secure boot
   for RP2350 series chips and pico2 '
 inputs:
-  FIRMWARE:
-    description: 'Path to the previously generated uf2 firmware file'
+  SIGN_WORKSPACE:
+    description:
+      subdirectory you want the siging tool to work in
     required: true
-    default: 'workspace/firmware/firmware.uf2'
+
+  FIRMWARE:
+    description: 
+      file name of previously generated uf2 firmware file
+      must be inside of SIGN_WORKSPACE directory
+      eg: firmware.uf2  we assume that you have copied
+      the firmware file inside of sign_workspace.
+    required: true
+    
+
+  FIRMWARE_OUTPUT
+    description:
+      filename to write the generated signed firmware 
+      to.  This is a simple filename it will be saved
+      in SIGN_WORKSPACE directory.
+    required: true
+
   BUILD_ACTION:
     description: |
       sign or build. 
@@ -14,15 +31,16 @@ inputs:
       When set to build SOURCE_DIR is mandatory'
     required: true
     default: 'sign'
+
   OTP_FILE:
     description: |
-      path to the OTP file to be used for signing
-      you should have any fuse bits you need set 
-      already defined in this file and the signer 
-      will update it with the public key ready to 
-      burn into your chips.  
+      Filename of any input OTP file used to set
+      any FUSE bits other than those needed 
+      to enable secure boot.  This is assumed 
+      to be a simple path inside of SIGN_WORKSPACe.
     required: true
     default: 'workspace/firmware/otp_file.json'
+
   BOARD_NAME:
     description: | 
       this is the boardname passed into the build
@@ -30,6 +48,7 @@ inputs:
       is set to build. 
     required: false
     default: 'pico2'
+
   SOURCE_DIR: 
     description: |
       source directory containing source code to build
@@ -39,6 +58,7 @@ inputs:
       at https://github.com/immutaverse/rp2350-ex-blink-fast      
     required: false
     default: 'GitHub'
+
   SIGN_METADATA:
     description: |
       path to file contaiing Metadata to be included 
@@ -47,6 +67,7 @@ inputs:
       the pico2 signer does not.
     required: false
     default: '{}'
+
   SIGN_LOG_LEVEL:
     description: |
       Log level for the signing process.  This is a 
@@ -62,9 +83,9 @@ inputs:
       any source.   
     required: true    
 
-  DOCKER_ACCESS_TOKEN:
+  SIGN_ACCESS_TOKEN:
     description: |
-      Access key for the docker image to pull the 
+      Access key for to allow access to the SIGNING Utility      
       image from the registry.  This is normally 
       a github secret but you can provide it from 
       any source.   
@@ -90,26 +111,25 @@ runs:
       - name: Set Environment Variables
         shell: bash
         run: |
-          export DOCKER_WORKSPACE="docker_workspace" 
-          echo "DOCKER_WORKSPACE=$DOCKER_WORKSPACE" >> $GITHUB_ENV
-          echo "DW_FIRMWARE=docker_workspace/firmware" >> $GITHUB_ENV
-          echo "DW_OTP=docker_workspace/otp.json" >> $GITHUB_ENV
-          echo "DW_FUSE=docker_workspace/otp.sec-boot-blow-fuses.sh" >> $GITHUB_ENV
-          echo "BUILD_ACTION=${{ inputs.BUILD_ACTION }}" >> $GITHUB_ENV
-          echo "FIRMWARE=${{ inputs.FIRMWARE }}" >> $GITHUB_ENV
-          echo "OTP_FILE=${{ inputs.OTP_FILE }}" >> $GITHUB_ENV
-          echo "PRIVATE_KEY=${{ inputs.PRIVATE_KEY }}" >> $GITHUB_ENV
-          echo "DOCKER_ACCESS_TOKEN=${{ inputs.DOCKER_ACCESS_TOKEN }}" >> $GITHUB_ENV
-          echo "BOARD_NAME=${{ inputs.BOARD_NAME }}" >> $GITHUB_ENV
-          echo "SOURCE_DIR=${{ inputs.SOURCE_DIR }}" >> $GITHUB_ENV
+          export SIGN_WORKSPACE="${{ inputs.SIGN_WORKSPACE }}" 
+          #echo "DW_FIRMWARE=docker_workspace/firmware" >> $GITHUB_ENV
+          #echo "DW_OTP=docker_workspace/otp.json" >> $GITHUB_ENV
+          #echo "DW_FUSE=docker_workspace/otp.sec-boot-blow-fuses.sh" >> $GITHUB_ENV
+          #echo "BUILD_ACTION=${{ inputs.BUILD_ACTION }}" >> $GITHUB_ENV
+          #echo "FIRMWARE=${{ inputs.FIRMWARE }}" >> $GITHUB_ENV
+          #echo "OTP_FILE=${{ inputs.OTP_FILE }}" >> $GITHUB_ENV
+          #echo "PRIVATE_KEY=${{ inputs.PRIVATE_KEY }}" >> $GITHUB_ENV
+          #echo "DOCKER_ACCESS_TOKEN=${{ inputs.DOCKER_ACCESS_TOKEN }}" >> $GITHUB_ENV
+          #echo "BOARD_NAME=${{ inputs.BOARD_NAME }}" >> $GITHUB_ENV
+          #echo "SOURCE_DIR=${{ inputs.SOURCE_DIR }}" >> $GITHUB_ENV
           # Location of resources once mounted inside of GITUB
           #echo "MNT_FIRMWARE=/workspace/firmware" >> $GITHUB_ENV
           #echo "MNT_OTP=/workspace/otp.json" >> $GITHUB_ENV
           #echo "MNT_BLOW=/workspace/firmware-blow-fuses.sh" >> $GITHUB_ENV
           # Generate a timestamp (format: YYYY-MM-DD.HH.MM.SS)          
-          export TSOUTDIR="$DOCKER_WORKSPACE/out/$(date +"%Y-%m-%d.%H.%M.%S")"          
-          echo "TSOUTDIR=$TSOUTDIR" >> "$GITHUB_ENV"                                    
-          echo "TSOUTDIR=$TSOUTDIR"
+          #export TSOUTDIR="$DOCKER_WORKSPACE/out/$(date +"%Y-%m-%d.%H.%M.%S")"          
+          #echo "TSOUTDIR=$TSOUTDIR" >> "$GITHUB_ENV"                                    
+          #echo "TSOUTDIR=$TSOUTDIR"
       
 
       # RE: Principle of least access we only want to copy 
@@ -117,33 +137,33 @@ runs:
       # to a directory where the docker image has access to them 
       # and we do not want to allow docker image access to full 
       # agent workspace file system. 
-      - name: prepare signing input
-        shell: bash
-        run: |
-          echo "pwd = $(pwd)"
-          echo "github_workspace path=$GITHUB_WORKSPACE"        
-          echo "docker_workspace path=$DOCKER_WORKSPACE"  
-          echo "DW_WSP=$GITHUB_WORKSPACE/$DOCKER_WORKSPACE"
-          echo "curr ls"
-          ls -l
-          echo "ls .."
-          ls -l ..
-          echo "ls ../.."
-          ls -l ../..
-          echo "ls github.action_path"
-          ls -l ${{ github.action_path }}
-          # Actual script to copy the inputs
-          python3 ${{ github.action_path }}/prepare-sign-input.py          
-          echo Docker workspace $GITHUB_WORKSPACE/$DOCKER_WORKSPACE after prepare-sign-input
-          ls -l $GITHUB_WORKSPACE/$DOCKER_WORKSPACE
-          echo "finish preapring signing input"
-          echo "docker_workspace path=$DOCKER_WORKSPACE"
-          ls -l $DOCKER_WORKSPACE
+      #- name: prepare signing input
+      #  shell: bash
+      #  run: |
+      #    echo "pwd = $(pwd)"
+      #    echo "github_workspace path=$GITHUB_WORKSPACE"        
+      #    echo "docker_workspace path=$DOCKER_WORKSPACE"  
+      #    echo "DW_WSP=$GITHUB_WORKSPACE/$DOCKER_WORKSPACE"
+      #    echo "curr ls"
+      #    ls -l
+      #    echo "ls .."
+      #    ls -l ..
+      #    echo "ls ../.."
+      #    ls -l ../..
+      #    echo "ls github.action_path"
+      #    ls -l ${{ github.action_path }}
+      #    # Actual script to copy the inputs
+      #    python3 ${{ github.action_path }}/prepare-sign-input.py          
+      #    echo Docker workspace $GITHUB_WORKSPACE/$DOCKER_WORKSPACE after prepare-sign-input
+      #    ls -l $GITHUB_WORKSPACE/$DOCKER_WORKSPACE
+      #    echo "finish preapring signing input"
+      #    echo "docker_workspace path=$DOCKER_WORKSPACE"
+      #    ls -l $DOCKER_WORKSPACE
           
           
       - name: Log in to GitHub Container Registry (GHCR)
         shell: bash
-        run: echo "${{ inputs.DOCKER_ACCESS_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+        run: echo "${{ inputs.SIGN_ACCESS_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: pull docker image from registry
         shell: bash
@@ -161,21 +181,12 @@ runs:
           echo "start docker run"
           docker run --rm -a stdout -a stderr -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/docker_workspace" \
             -e PRIVATE_KEY="$PRIVATE_KEY" \
-            -e FIRMWARE="$DW_FIRMWARE" \
-            -e OTP_FILE="$DW_OTP" \
+            -e FIRMWARE="${{ inputs.SIGN_WORKSPACE }}/${{ $FIRMWARE" \
+            -e OTP_FILE="${{ inputs.OTP_FILE }} / ${{ inputs.OTP_FILE }}" \
+            -e FIRMWARE_OUTPUT="${{ inputs.sign_WORKSPACE }}/{{ inputs.FIRMWARE_OUTPUT }}" \
             -e BOARD_NAME="${{ inputs.BOARD_NAME }}" \
             -e BUILD_ACTION="${{ inputs.BUILD_ACTION }}" \
             -e SIGN_LOG_LEVEL="${{ inputs.SIGN_LOG_LEVEL }}" \
             ghcr.io/immutaverse/pico-sign:latest
           echo "docker run finished"
-
-
-      - name: Copy Signed Assets Back normal target locations
-        shell: bash
-        run: |
-          mkdir -p "$TSOUTDIR"    
-          echo "TSOUTDIR created at: $TSOUTDIR"
-          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/firmware.signed" "$TSOUTDIR"
-          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp-final.json" "$TSOUTDIR"
-          cp "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE/otp.sec-boot-blow-fuses.sh" "$TSOUTDIR"
 
