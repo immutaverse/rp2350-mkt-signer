@@ -111,7 +111,7 @@ runs:
       - name: Set Environment Variables
         shell: bash
         run: |
-           export FW_PATH=${{ inputs.SIGN_WORKSPACE }}/${{ inputs.FIRMWARE }}" 
+           export FW_PATH="${{ inputs.SIGN_WORKSPACE }}/${{ inputs.FIRMWARE }}" 
            echo "FW_PATH=$FW_PATH" >> $GITHUB_ENV
            echo "FW_PATH=$FW_PATH"
            echo "PRIVATE_KEY=${{ inputs.PRIVATE_KEY }}" >> $GITHUB_ENV
