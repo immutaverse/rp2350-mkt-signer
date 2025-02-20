@@ -17,7 +17,7 @@ inputs:
     required: true
     
 
-  FIRMWARE_OUTPUT
+  FIRMWARE_OUTPUT:
     description:
       filename to write the generated signed firmware 
       to.  This is a simple filename it will be saved
@@ -66,7 +66,7 @@ inputs:
       of key value pairs.  Not all chip signiners use this
       the pico2 signer does not.
     required: false
-    default: '{}'
+    default: "NONE"
 
   SIGN_LOG_LEVEL:
     description: |
