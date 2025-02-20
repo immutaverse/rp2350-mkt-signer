@@ -108,17 +108,21 @@ runs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-     # - name: Set Environment Variables
-     #   shell: bash
-     #   run: |
-     #     export SIGN_WORKSPACE="${{ inputs.SIGN_WORKSPACE }}" 
+      - name: Set Environment Variables
+        shell: bash
+        run: |
+           export FW_PATH=${{ inputs.SIGN_WORKSPACE }}/${{ inputs.FIRMWARE }}" 
+           echo "FW_PATH=$FW_PATH" >> $GITHUB_ENV
+           echo "FW_PATH=$FW_PATH"
+           echo "PRIVATE_KEY=${{ inputs.PRIVATE_KEY }}" >> $GITHUB_ENV
+
      #     #echo "DW_FIRMWARE=docker_workspace/firmware" >> $GITHUB_ENV
      #     #echo "DW_OTP=docker_workspace/otp.json" >> $GITHUB_ENV
      #     #echo "DW_FUSE=docker_workspace/otp.sec-boot-blow-fuses.sh" >> $GITHUB_ENV
      #     #echo "BUILD_ACTION=${{ inputs.BUILD_ACTION }}" >> $GITHUB_ENV
      #     #echo "FIRMWARE=${{ inputs.FIRMWARE }}" >> $GITHUB_ENV
      #     #echo "OTP_FILE=${{ inputs.OTP_FILE }}" >> $GITHUB_ENV
-     #     #echo "PRIVATE_KEY=${{ inputs.PRIVATE_KEY }}" >> $GITHUB_ENV
+           
      #     #echo "DOCKER_ACCESS_TOKEN=${{ inputs.DOCKER_ACCESS_TOKEN }}" >> $GITHUB_ENV
      #     #echo "BOARD_NAME=${{ inputs.BOARD_NAME }}" >> $GITHUB_ENV
      #     #echo "SOURCE_DIR=${{ inputs.SOURCE_DIR }}" >> $GITHUB_ENV
@@ -160,6 +164,16 @@ runs:
       #    echo "docker_workspace path=$DOCKER_WORKSPACE"
       #    ls -l $DOCKER_WORKSPACE
           
+
+      - name: check signing input files exist 
+        shell: bash
+        run: |
+          echo "SIGN_WORKSPACE=${{ inputs.SIGN_WORKSPACE }}"
+          echo "files in ${{ inputs.SIGN_WORKSPACE }}"
+          ls -l ${{ inputs.SIGN_WORKSPACE }}
+          echo "FW_PATH=$FW_PATH"
+          ls -l $FW_PATH
+
           
       - name: Log in to GitHub Container Registry (GHCR)
         shell: bash
@@ -183,8 +197,8 @@ runs:
           echo "start docker run"
           docker run --rm -a stdout -a stderr -v "$GITHUB_WORKSPACE/$DOCKER_WORKSPACE:/docker_workspace" \
             -e PRIVATE_KEY="$PRIVATE_KEY" \
-            -e FIRMWARE="${{ inputs.SIGN_WORKSPACE }}/${{ inputs.FIRMWARE }}" \
-            -e OTP_FILE="${{ inputs.OTP_FILE }} / ${{ inputs.OTP_FILE }}" \
+            -e FIRMWARE="$FW_PATH" \
+            -e OTP_FILE="${{ inputs.OTP_FILE }}/${{ inputs.OTP_FILE }}" \
             -e FIRMWARE_OUTPUT="${{ inputs.sign_WORKSPACE }}/{{ inputs.FIRMWARE_OUTPUT }}" \
             -e BOARD_NAME="${{ inputs.BOARD_NAME }}" \
             -e BUILD_ACTION="${{ inputs.BUILD_ACTION }}" \
